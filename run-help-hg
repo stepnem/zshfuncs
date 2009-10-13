@@ -1,0 +1,10 @@
+#autoload
+if [ $# -eq 0 ]; then
+    man hg
+else
+    local al
+    if al=$(hg showconfig "alias.$1") && [[ -n $al ]]; then
+        1=${al%% *}
+    fi
+    hg help $1
+fi

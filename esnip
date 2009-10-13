@@ -1,0 +1,2 @@
+#autoload
+vim ~/.vim/snippets/$1.snippets

@@ -1,0 +1,45 @@
+#autoload
+# http://permalink.gmane.org/gmane.comp.shells.zsh.devel/19183
+# history-substring-search-backward
+# can also be used for the widget history-substring-search-forward.
+
+emulate -L zsh
+setopt extendedglob
+
+zmodload -i zsh/parameter
+
+local search=$LBUFFER MATCH MBEGIN MEND
+
+typeset -g ZLE_HISTORY_SUBSTRING_MATCH
+
+if [[ $LASTWIDGET = history-substring-search-* ]]; then
+  # here's one I prepared earlier
+  search=$ZLE_HISTORY_SUBSTRING_MATCH
+else
+  # We need to quote metacharacters in the search string
+  # since they are otherwise active in the reverse subscript.
+  # We need to avoid quoting other characters since they aren't
+  # and just stay quoted, rather annoyingly.
+  search=${LBUFFER//(#m)[\][()\\*?#<>~^]/\\$MATCH}
+  ZLE_HISTORY_SUBSTRING_MATCH=$search
+fi
+
+local -aU matches
+matches=(${(kon)history[(R)*${search}*]})
+
+# Filter out any match that's the same as the original.
+# Note this isn't a pattern this time.
+matches=(${matches:#${LBUFFER}})
+
+(( ${#matches} )) || return 1
+
+if [[ $WIDGET = *forward* ]]; then
+  eval "matches=(\${matches:#<-$HISTNO>})"
+  (( ${#matches} )) || return 1
+  HISTNO=${matches[1]}
+else
+  eval "matches=(\${matches:#<$HISTNO->})"
+  (( ${#matches} )) || return 1
+  HISTNO=${matches[-1]}
+fi
+

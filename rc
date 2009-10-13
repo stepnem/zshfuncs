@@ -1,0 +1,2 @@
+#autoload
+ci -i -u $1 && rcs -U $1

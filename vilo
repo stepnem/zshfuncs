@@ -1,0 +1,2 @@
+#autoload
+locate "$1" | xargs view

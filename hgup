@@ -1,0 +1,6 @@
+#autoload
+emulate -L zsh
+setopt noautonamedirs
+while IFS= read -r d; do
+	pushd "$d" && pwd && hg pull -u && popd
+done < ~/Hacking/hgupdatedirs

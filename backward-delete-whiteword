@@ -1,0 +1,4 @@
+#autoload
+# the dot calls the original function which deletes a whitespace word, so the
+# "zstyle ':zle:backward-delete-whiteword' word-style whitespace" is not needed
+zle .backward-kill-word

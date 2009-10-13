@@ -1,0 +1,7 @@
+#compdef gup
+# slow as ...
+#_SNGitDirs=(**/.git(/))
+((${+_SNGitDirs})) || _SNGitDirs=( `locate -w "$HOME/*/.git" 2>/dev/null` )
+local expl
+_description my_git_dirs expl 'my git directories'
+compadd "$expl[@]" ${${_SNGitDirs[@]%/.git}##*/}

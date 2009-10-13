@@ -1,0 +1,2 @@
+#compdef ef
+_files -W ~/.zsh/functions

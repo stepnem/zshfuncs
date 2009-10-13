@@ -1,0 +1,2 @@
+#autoload
+history 0 | grep "$@"

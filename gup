@@ -1,0 +1,35 @@
+#autoload
+((${+_SNGitDirs})) || _SNGitDirs=(`locate -w "$HOME/*/.git" 2>/dev/null`)
+((${+_SNGitUpdateDirs})) || _SNGitUpdateDirs=($(<~/Hacking/gitupdatedirs))
+emulate -L zsh
+setopt noautonamedirs
+if [[ $funcstack[2] == 'gupall' ]]; then
+	for d in ${_SNGitUpdateDirs[@]}; do
+		if [[ $# == 0 ]]; then
+			pushd "$d" && print "$d: "
+			[[ -f .git/refs/heads/master ]] && master='master' || master='upstream'
+			if [[ `git symbolic-ref HEAD` != "refs/heads/$master" ]]; then
+				git checkout $master && ! [[ `git ls-remote -h origin $master` =~ `git rev-parse HEAD` ]] && git pull && git log --patch-with-stat && git checkout '@{-1}' && popd || git checkout '@{-1}' && popd
+			else
+				! [[ `git ls-remote -h origin $master` =~ `git rev-parse HEAD` ]] && git pull && git log --patch-with-stat && popd || popd
+			fi
+		else
+			pushd "$d" && print "$d: " && git $argv[2,-1] && popd
+		fi
+	done
+else
+	for d in ${_SNGitDirs[@]%/.git}; do
+		if [[ "$1" == ${d##*/} ]]; then
+			if [[ $# == 1 ]]; then
+				pushd "$d" && (git pull && git log --patch-with-stat && popd) || popd
+			else
+				if [[ $2 == '+' ]]; then
+					pushd "$d" && git $argv[3,-1]
+				else
+					pushd "$d" && (git $argv[2,-1] && popd) || popd
+				fi
+			fi
+			break
+		fi
+	done
+fi

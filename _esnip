@@ -1,0 +1,4 @@
+#compdef esnip
+local expl
+_description vim_snippet_files expl 'Vim snippet files'
+compadd "$expl[@]" `echo ~/.vim/snippets/*.snippets(.:s,.snippets,,:t)`

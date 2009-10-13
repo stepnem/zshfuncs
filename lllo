@@ -1,0 +1,2 @@
+#autoload
+ls -l `locate "$@"`

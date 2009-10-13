@@ -1,0 +1,10 @@
+#autoload
+if [ $# -eq 0 ]; then
+    man bzr
+else
+    local al
+    if al=$(bzr alias "$1") && [[ $al != *not\ found* ]]; then
+        1=${${(Q)al#*=}%% *}
+    fi
+    bzr help $1
+fi

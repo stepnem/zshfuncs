@@ -1,0 +1,2 @@
+#compdef doc
+_files -W /usr/share/doc -/

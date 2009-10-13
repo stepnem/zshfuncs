@@ -1,0 +1,5 @@
+#compdef infoc
+((${+_SNCoreutilsWlist})) || _SNCoreutilsWlist=($( zcat /usr/share/info/coreutils.info.gz | sed -ne '/(coreutils)/s/.\+(coreutils)\(.\+\)invocation.\+/\1/p' | sed -e :a -e '$!N;s/\n/ /;ta' ))
+local expl
+_description coreutils_commands expl 'coreutils'
+compadd "$expl[@]" ${_SNCoreutilsWlist[@]}

@@ -1,0 +1,2 @@
+#autoload
+cd /usr/share/doc/$1 && ls -F --color=auto

@@ -1,0 +1,6 @@
+#autoload
+emulate -L zsh
+setopt noautonamedirs
+while IFS= read -r d; do
+	pushd "$d" && pwd && [[ `bzr missing` != *Branches\ are\ up\ to\ date. ]] && bzr pull && bzr log -p
+done < ~/Hacking/bzrupdatedirs

@@ -364,31 +364,32 @@ __git_aliases_and_commands () {
     'aliases: :__git_aliases' \
     'commands: :_git_commands'
 }
-# NOTE: -c is undocumented.
+
 # TODO: Perhaps provide some sort of completion or guard for line range (-L).
-# NOTE: --score-debug is undocumented.
-# NOTE: --show-name is undocumented.
-# NOTE: --show-number is undocumented.
+typeset -a git_annotate_options
+git_annotate_options=(
+  '-b[show blank SHA-1 for boundary commits]'
+  '--root[do not treat root commits as boundaries]'
+  '--show-stats[include additional statistics at the end of blame output]'
+  '-l[show long rev]'
+  '-s[suppress author name and timestamp]'
+  '-t[show raw timestamp]'
+  '-w[ignore whitespace differences]'
+  '-S[use revs from revs-file]:revs-file:_files'
+  '-M-[detect moving lines in the file as well]:number of characters'
+  '*-C-[detect copied lines from other files from same commit as well]:number of characters'
+  '-L[annotate only the given line range]:line range'
+  '--contents[annotate against the given file if no rev is specified]:file:_files'
+  '--incremental[show results incrementally for machine processing]'
+  '--score-debug[show output score for blame entries]'
+  '(-f --show-name)'{-f,--show-name}'[show original name]'
+  '(-n --show-number)'{-n,--show-number}'[show original linenumber]'
+  '(-p --porcelain)'{-p,--porcelain}'[show results designed for machine processing]'
+  '(-h --help)'{-h,--help}'[show help message]'
+  )
 (( $+functions[_git-annotate] )) ||
 _git-annotate () {
-  _arguments -S \
-    '-b[show blank SHA-1 for boundary commits]' \
-    '--root[do not treat root commits as boundaries]' \
-    '--show-stats[include additional statistics at the end of blame output]' \
-    '-c[undocumented]' \
-    '-l[show long rev]' \
-    '-t[show raw timestamp]' \
-    '-S[use revs from revs-file]:revs-file:_files' \
-    '-M-[detect moving lines in the file as well]:number of characters' \
-    '*-C-[detect copied lines from other files from same commit as well]:number of characters' \
-    '-L[annotate only the given line range]:line range' \
-    '--contents[annotate against the given file if no rev is specified]:file:_files' \
-    '--incremental[show results incrementally for machine processing]' \
-    '--score-debug[uncodumented]' \
-    '(-f --show-name)'{-f,--show-name}'[undocumented]' \
-    '(-n --show-number)'{-n,--show-number}'[undocumented]' \
-    '(-p --porcelain)'{-p,--porcelain}'[show results designed for machine processing]' \
-    '(-h --help)'{-h,--help}'[show help message]' \
+  _arguments -S $git_annotate_options \
     ':file:__git_cached_files' \
     '::revision:__git_revisions' && ret=0
 }
@@ -420,9 +421,14 @@ _git-apply () {
 
 # NOTE: Documentation mentions options that don’t exist anymore, for example,
 # --since, and shows -C twice!aa
+typeset -a git_blame_options
+git_blame_options=($git_annotate_options)
+git_blame_options+=('-c[use the same output mode as git-annotate]')
 (( $+functions[_git-blame] )) ||
 _git-blame () {
-  _git-annotate
+  _arguments -S $git_blame_options \
+  ':file:__git_cached_files' \
+  '::revision:__git_revisions' && ret=0
 }
 
 (( $+functions[_git-checkout-index] )) ||

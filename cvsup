@@ -1,0 +1,10 @@
+#autoload
+emulate -LR zsh
+while IFS= read -r d; do
+  pushd "$d" && echo `pwd`: || { print -l '!@#$%'; return 1 }
+  cwd=${"$(pwd)":t}
+  #stampfile="$HOME/tmp/${cwd}cvstamp"
+  [[ `cvs -q update` != '' ]] && cvs diff -Rp -U3 | less
+  #touch $stampfile
+  popd
+done < ~/Hacking/cvsupdatedirs

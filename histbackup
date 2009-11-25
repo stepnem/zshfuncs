@@ -1,0 +1,11 @@
+#autoload
+emulate -LR zsh
+local histfile="$HOME/.zsh/.histfile"
+local bkpfile="$HOME/.zsh/.histfileBKP"
+local histlength=${"$(wc -l $histfile)"%% *}
+local bkplength=${"$(wc -l $bkpfile)"%% *}
+if (($histlength >= $bkplength)); then
+  cp $histfile $bkpfile && echo "Succesfully backed up $histfile to $bkpfile." || echo "histbackup: Couldn't copy $histfile to $bkpfile."
+else
+  echo "histbackup: $bkpfile longer than $histfile!" && return 2
+fi

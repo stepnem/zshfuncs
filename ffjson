@@ -1,0 +1,9 @@
+#autoload
+emulate -LR zsh
+
+TMPFILE=`mktemp` || exit 1
+~/Programs/Perl/ffjsonmunger.pl =(prettify_json $1) > $TMPFILE
+local -a ary
+ary=(${(f)"$(<$TMPFILE)"})
+for line in $ary; do echo "$line"; done
+rm $TMPFILE

@@ -1,0 +1,10 @@
+#autoload
+if [ $# -eq 0 ]; then
+    man darcs
+else
+    #local al
+    #if al=$(hg showconfig "alias.$1") && [[ -n $al ]]; then
+    #    1=${al%% *}
+    #fi
+    darcs help $1
+fi

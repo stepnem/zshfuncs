@@ -2840,12 +2840,78 @@ __git_unmerged_files () {
 #this is for git-commit which can take files both git-added and not
 (( $+functions[__git_changed_files] )) ||
 __git_changed_files () {
+  # this function is needed to transform paths relative to the repo base dir
+  # (as returned by diff-index) into the form relative to the current directory
+  # :|
+  munge_paths () {
+    # SN FIXME is this needed? How come I don't see emulate -R anywhere in this file?
+    emulate -LR zsh
+    local cwd scnt scnta scntc
+    local -a abs paths
+    cwd=${"$(pwd)":a}
+    base=${${"$(git rev-parse --git-dir)":a}%.git}
+    abs=($base${^files})
+    #print abs: $abs
+    #print cwd: $cwd
+    scntc=${#${cwd//[^\/]}}
+    #print scntc: $scntc
+    for ((i=1; i <= $#abs; i++)); do
+      scnta=${#${abs[$i]//[^\/]}}
+      scnt=$(($scntc - $scnta))
+      #print scnta: $scnta
+      #print scnt: $scnt
+      if ((scnt >= 0)); then
+      paths[$i]="$abs[$i]:t"
+        for ((j=0; j <= $scnt; j++)); do
+          paths[$i]="../$paths[$i]"
+        done
+      else
+        if [[ $abs[$i] == $cwd* ]]; then
+          paths[$i]="${${abs[$i]}#$cwd/}"
+        else
+          lcp () {
+            local lcp
+            for ((i=1; i<=$#1; i++)); do
+              if [[ ${1[i]} == ${2[i]} ]]; then
+                lcp+=${1[i]}
+              else
+                break
+              fi
+            done
+            echo "$lcp"
+          }
+          local common="$(lcp $cwd $abs[$i])"
+          #print common: $common
+          local prefix=""
+          paths[$i]="${${abs[$i]}#$common}"
+          #print "paths[$i]:" $paths[$i]
+          local cwdr="${${cwd}#$common}"
+          #print cwdr: $cwdr
+          scntcr=${#${cwdr//[^\/]}}
+          #print scntcr: $scntcr
+          for ((j=0; j <= $scntcr; j++)); do
+            #paths[$i]="${${paths[$i]#/}#*/}"
+            #print "paths[$i]": $paths[$i]
+            prefix="../$prefix"
+          done
+          paths[$i]="$prefix$paths[$i]"
+        fi
+      fi
+      #print paths: $paths
+    done
+    print ${(pj:\0:)paths}
+  }
+
   local -a files
 
   files=(${(ps:\0:)"$(_call_program files git diff-index -z --name-only --no-color HEAD 2>/dev/null)"})
   __git_command_successful || return
+  files=(${(ps:\0:)"$(munge_paths)"})
 
-  _wanted files expl 'index file' _multi_parts $@ - / files
+  #local expl
+  _description files expl 'Files to commit'
+  compadd "$expl[@]" - "$files[@]"
+  #_wanted files expl 'index file' _multi_parts $@ - / files
 }
 
 (( $+functions[__git_tree_files] )) ||

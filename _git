@@ -8,6 +8,7 @@
 # TODO: suggested zstyles:
 #
 # zstyle ':completion::*:git-{name-rev,add,rm}:*' ignore-line true
+# TODO: search for 'undocumented'
 
 _git() {
 local nul_arg abbrev_arg find_copies_harder_arg diff_l_arg pretty_arg exec_arg
@@ -2037,6 +2038,7 @@ __git_stashes () {
   _wanted tags expl stash-list compadd $* - $st_list
 }
 
+# TODO git stash list options (git-log)
 (( $+functions[_git-stash] )) ||
 _git-stash () {
   local expl
@@ -2046,6 +2048,7 @@ _git-stash () {
     apply:"restore the changes recorded in the stash"
     branch:"branch off at the commit at which the stash was originally created"
     clear:"remove all the stashed states"
+    create:"create a stash and return its object name"
     drop:"remove a single stashed state from the stash list"
     list:"list the stashes that you currently have"
     pop:"remove and apply a single stashed state from the stash list"
@@ -2057,9 +2060,10 @@ _git-stash () {
     _describe -t command "git-stash commands" stash_cmds && ret=0
   else
     case $words[2] in
-      (apply)
+      (apply|pop)
         _arguments \
-          '--index[try to reinstate the index'\''s changes too]' \
+          '--index[try to reinstate the index changes, too]' \
+          '(-q --quiet)'{-q,--quiet}'[undocumented]' \
           '*:stash:__git_stashes' && ret=0
         ;;
       (branch)
@@ -2067,13 +2071,20 @@ _git-stash () {
           '2:branch name:' \
           '*:stash:__git_stashes' && ret=0
         ;;
-      (drop|pop|show)
+      (drop)
+        _arguments \
+          '(-q --quiet)'{-q,--quiet}'[undocumented]' \
+          '*:stash:__git_stashes' && ret=0
+        ;;
+      (show)
         _arguments \
           '*:stash:__git_stashes' && ret=0
         ;;
       (save)
         _arguments \
-          '--keep-index[all changes already added to the index are left intact]' \
+          '--patch[select hunks to stash interactively, implies --keep-index]' \
+          '(-k --keep-index)'{-k,--keep-index}'[all changes already added to the index are left intact]' \
+          '--no-keep-index[override --keep-index]' \
           '*: :->end' && ret=0
 
         [[ $state == 'end' ]] && _message 'message'

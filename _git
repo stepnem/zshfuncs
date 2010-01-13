@@ -9,6 +9,7 @@
 #
 # zstyle ':completion::*:git-{name-rev,add,rm}:*' ignore-line true
 # TODO: search for 'undocumented'
+# TODO: WTF is __git_tree_files supposed to do?
 
 _git() {
 local nul_arg abbrev_arg find_copies_harder_arg diff_l_arg pretty_arg exec_arg
@@ -1972,6 +1973,7 @@ _git-rerere () {
   _describe -t commands 'command' commands
 }
 
+#TODO the path_arg is totally unfunctional
 (( $+functions[_git-reset] )) ||
 _git-reset () {
   local commit_arg path_arg
@@ -1984,10 +1986,12 @@ _git-reset () {
   fi
 
   _arguments -S -A '--*' \
-    '(        --soft --hard)--mixed[like --soft but report what has not been updated (default)]' \
-    '(--mixed        --hard)--soft[do not touch the index file nor the working tree]' \
-    '(--mixed --soft       )--hard[match the working tree and index to the given tree]' \
-    '--merge[bring local changes along to new commit]' \
+    '(        --soft --hard --merge)--mixed[reset the index but not the working tree (default)]' \
+    '(--mixed        --hard --merge)--soft[do not touch the index file nor the working tree]' \
+    '(--mixed --soft        --merge)--hard[match the working tree and index to the given tree]' \
+    '(--mixed --soft --hard        )--merge[bring local changes along to new commit]' \
+    '(-p --patch)'{-p,--patch}'[select hunks interactively (opposite to git add -p)]' \
+    '(-q --quiet)'{-q,--quiet}'[be quiet, only report errors]' \
     $commit_arg \
     $path_arg && ret=0
 }

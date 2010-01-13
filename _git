@@ -1891,6 +1891,7 @@ _git-push () {
   _arguments \
     $force_ref_arg \
     '--all[push all refs under refs/heads/]' \
+    '--delete[delete all listed refs from the remote repository]' \
     '--mirror[push all refs under refs/heads/ and refs/tags/ and delete non-existing refs]' \
     '--dry-run[do everything except actually send the updates]' \
     '--tags[all tags under "$GIT_DIR/refs/tags" are pushed]' \

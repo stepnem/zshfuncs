@@ -1649,7 +1649,6 @@ _git-clean () {
     '*:file:_files' && ret=0
 }
 
-# TODO: The --no-checkout is undocumented.
 (( $+functions[_git-clone] )) ||
 _git-clone () {
   _arguments -S \
@@ -1663,6 +1662,8 @@ _git-clone () {
     '(-n --no-checkout)'{-n,--no-checkout}'[do not checkout HEAD after clone is complete]' \
     '(-o --origin)'{-o,--origin}'[use given name instead of "origin" as branch name]:name:__git_guard_branch-name' \
     '--no-hardlinks[copy files instead of hardlinking when doing a local clone]' \
+    '--recursive[initialize all submodules after creating the clone]' \
+    '(-b --branch)'{-b,--branch}'[point the newly created HEAD to the branch given]: :__git_guard_branch-name' \
     $upload_pack_arg \
     $template_arg \
     '--depth[create a shallow clone, given number of revisions deep]: :_guard "[[\:digit\:]]##" depth' \

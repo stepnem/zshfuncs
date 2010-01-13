@@ -622,7 +622,9 @@ _git-read-tree () {
     '3:third tree-ish to be read/merged:__git_tree_ishs' && ret=0
 }
 
-# TODO: Complete value regex somehow?
+# TODO:
+# - complete value regex somehow?
+# - --get-color(bool)
 (( $+functions[_git-config] )) ||
 _git-config () {
   local name_arg
@@ -640,6 +642,9 @@ _git-config () {
     '(--system         )--global[use user-global config file]' \
     '(      --bool)--int[setting is an integer]' \
     '(--int       )--bool[setting is a boolean]' \
+    '(--int --bool)--bool-or-int[setting is an integer or a boolean]' \
+    "--path[perform path expansion, i.e. expand the leading '~']" \
+    '(-z --null)'{--null,-z}'[end values with a null char, use newline to separate keys and values]' \
     $name_arg \
     ":value:__git_config_values $words[CURRENT-1]" \
     '::value regex' \
@@ -653,7 +658,8 @@ _git-config () {
     '(2 -)--get-all[get all matching values of the key]' \
     '(2 -)--get-regexp[like "--get-all", but interpret "name" as a regular expression]' \
     '(-)--replace-all[replace all values of the given key]' \
-    '(: --int --bool)'{-l,--list}'[list all variables set in config file]' && ret=0
+    '(-e --edit)'{--edit,-e}'[open an editor on the specified config file]' \
+    '(: --int --bool --bool-or-int)'{-l,--list}'[list all variables set in config file]' && ret=0
 }
 
 # NOTE: --track is undocumented.

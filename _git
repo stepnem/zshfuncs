@@ -14,6 +14,7 @@ _git() {
 local nul_arg abbrev_arg find_copies_harder_arg diff_l_arg pretty_arg exec_arg
 local author_conversion_file_arg long_author_conversion_file_arg verbose_arg
 local help_arg template_arg shared_arg thin_arg author_conversion_file_arg_spec
+local untracked_files_arg
 local -a diff_args fetch_args merge_args force_ref_arg tags_fetch_arg
 local -a upload_pack_arg common_fetch_args common_apply_args
 local -a revision_arguments
@@ -114,6 +115,10 @@ author_conversion_file_arg_spec='[specify author-conversion file]:author-convers
 author_conversion_file_arg='-A'$author_conversion_file_arg_spec
 
 long_author_conversion_file_arg='--authors-file=-'$author_conversion_file_arg_spec
+
+untracked_files_arg=('(-u- --untracked-files=-)'{-u-,--untracked-files=-}'[show untracked files]:mode:((no\:"show no untracked files"
+                                                                                                       normal\:"show untracked files and directories"
+                                                                                                       all\:"also show individual files in untracked directories"))')
 
 verbose_arg='-v[produce verbose output]'
 
@@ -1681,7 +1686,7 @@ _git-commit () {
     '(-s --signoff)'{-s,--signoff}'[add Signed-off-by line at the end of the commit message]' \
     '(-q --quiet -v --verbose)'{-q,--quiet}'[suppress commit summary message]' \
     '(-q --quiet -v --verbose)'{-v,--verbose}'[show unified diff of all file changes]' \
-    '(-u --untracked-files)'{-u,--untracked-files}'[show files in untracked directories]' \
+    $untracked_files_arg \
     '*:file:__git_changed_files' \
     - '(message)' \
       '--amend[amend the tip of the current branch]' \
@@ -2034,7 +2039,12 @@ _git-show-branch () {
 
 (( $+functions[_git-status] )) ||
 _git-status () {
-  _git-commit
+  _arguments -S \
+    '(-s --short)'{--short,-s}'[give the output in the short-format]' \
+    '--porcelain[give the output in a stable, easy-to-parse format for scripts]' \
+    $untracked_files_arg \
+    '-z[terminate entries with NUL instead of LF]' \
+    '*:file:__git_changed_files' \
 }
 __git_zstyle_default ':completion::complete:git-status:argument-rest:*' ignore-line yes
 

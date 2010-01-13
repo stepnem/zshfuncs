@@ -1674,7 +1674,9 @@ _git-commit () {
   _arguments -S \
     '--allow-empty[allow recording an empty commit]' \
     '(-a --all)'{-a,--all}'[update all paths in the index file]' \
-    '--author[override the author name used in the commit]:author name' \
+    '--author=-[override the author name used in the commit]:author name' \
+    '--reset-author[with -C/-c/--amend, set authorship of the resulting commit to the committer and renew the author timestamp]' \
+    '--date=-[override the author date used in the commit]:author date' \
     '--cleanup=-[specify how the commit message should be cleaned up]:mode:((verbatim\:"don'\''t change the commit message at all"
                                                                              whitespace\:"remove leading and trailing whitespace lines"
                                                                              strip\:"remove both whitespace and commentary lines"
@@ -1684,6 +1686,10 @@ _git-commit () {
     '(-o --only -i --include)'{-o,--only}'[commit only the given files]' \
     '(-n --no-verify)'{-n,--no-verify}'[do not look for suspicious lines the commit introduces]' \
     '(-s --signoff)'{-s,--signoff}'[add Signed-off-by line at the end of the commit message]' \
+    '--dry-run[only show what would be done]' \
+    '--short[implies --dry-run, give the output in the short-format]' \
+    '--porcelain[implies --dry-run, give the output in a porcelain-ready format]' \
+    '-z[terminate entries with NUL instead of LF, implies --porcelain when no format given]' \
     '(-q --quiet -v --verbose)'{-q,--quiet}'[suppress commit summary message]' \
     '(-q --quiet -v --verbose)'{-v,--verbose}'[show unified diff of all file changes]' \
     $untracked_files_arg \

@@ -126,6 +126,7 @@ common_fetch_args=(
   $upload_pack_arg
   $force_ref_arg
   $tags_fetch_arg
+  '--all[fetch all remotes]'
   '(-k --keep)'{-k,--keep}'[keep downloaded pack]'
   '(-u --update-head-ok)'{-u,--update-head-ok}'[allow updates of current branch head]'
   '(-q --quiet)'{-q,--quiet}'[do not print any results to stdout]'
@@ -1705,10 +1706,14 @@ _git-diff () {
     '*::index file:__git_files' && ret=0
 }
 
+# TODO: --multiple (shouldn't accept <refspec>)
 (( $+functions[_git-fetch] )) ||
 _git-fetch () {
   _arguments \
     $common_fetch_args \
+    '--dry-run[only show what would be done]' \
+    '--multiple[allow several <repository> and <group> arguments to be specified]' \
+    '--prune[remove defunct remote tracking branches after fetching]' \
     ':repository:__git_any_repositories' \
     '*:refspec:__git_ref_specs' && ret=0
 }

@@ -1,2 +1,2 @@
 #autoload
-vim ~/.zsh/functions/$1
+env -u SESSION_MANAGER vim ~/.zsh/functions/$^*

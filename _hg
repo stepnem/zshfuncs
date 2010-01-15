@@ -33,6 +33,8 @@
 # is" basis, and the authors have no obligation to provide maintenance,
 # support, updates, enhancements, or modifications.
 
+# TODO Don't put the global options and command-specific options together! :-(
+
 emulate -LR zsh
 setopt extendedglob
 
@@ -941,6 +943,48 @@ _hg_cmd_strip() {
   '(--backup -b)'{-b,--backup}'[bundle unrelated changesets]' \
   '(--nobackup -n)'{-n,--nobackup}'[no backups]' \
   ':revision:_hg_tags'
+}
+
+# ATTIC
+_hg_attic() {
+  typeset -a patches
+  patches=(${${(f)"$(_hg_cmd attic)"}## #* }) # remove the whitespace and [*C]
+  (( $#patches )) && _describe -t hg-patches 'patches' patches
+}
+
+_hg_cmd_attic-display() {
+  _arguments -s -w : $_hg_global_opts \
+  '(--current -c)'{-c,--current}'[show information about the current patch being worked on]' \
+  '(--header -d)'{-d,--header}'[show information about <given patch name>]' \
+  ':patch:_hg_attic'
+}
+
+_hg_cmd_attic-shelve() {
+  _arguments -s -w : $_hg_global_opts \
+  '(--edit -e)'{-e,--edit}'[edit commit message]' \
+  '(--force -f)'{-f,--force}'[force save to file given, overridding pre-existing file]' \
+  '(--git -g)'{-g,--git}'[use git extended diff format]' \
+  '(--refresh -r)'{-r,--refresh}'[refresh the current patch without stowing it away]' \
+  '(--interactive -i)'{-i,--interactive}"[use the 'record' extension to create a patch interactively]" \
+  '(--include -I)'{-I,--include}'[include names matching the given patterns]' \
+  '(--exclude -X)'{-X,--exclude}'[exclude names matching the given patterns]' \
+  '(--message -m)'{-m,--message}'[use <text> as commit message]' \
+  '(--logfile -l)'{-l,--logfile}'[read commit message from <file>]' \
+  '(--currentuser -U)'{-U,--currentuser}"[add 'From: <current user>' to patch]" \
+  '(--user -u)'{-u,--user}"[add 'From: <given user>' to patch]" \
+  '(--currentdate -D)'{-D,--currentdate}"[add 'Date: <current date>' to patch]" \
+  '(--date -d)'{-d,--date}"[add 'Date: <given date>' to patch]" \
+  ':patch:_hg_attic'
+}
+
+_hg_cmd_attic-unshelve() {
+  _arguments -s -w : $_hg_global_opts \
+  '(--force -f)'{-f,--force}'[force patch over existing changes]' \
+  "--delete[don't keep the patch in the attic after applying it]" \
+  '(--similarity -s)'{-s,--similarity}'[guess renamed files by similarity (0<=s<=100)]' \
+  '(--dry-run -n)'{-n,--dry-run}'[leave files in ? or ! and print rename guesses from similarity]' \
+  '--reverse[leave only working changes which were not previously shelved]' \
+  ':patch:_hg_attic'
 }
 
 _hg "$@"

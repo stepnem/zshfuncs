@@ -1,2 +1,2 @@
 #autoload
-ci -i -u $1 && rcs -U $1
+ci -i -u "$1" && rcs -U "$1"

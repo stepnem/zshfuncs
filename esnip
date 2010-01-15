@@ -1,2 +1,8 @@
 #autoload
-vim ~/.vim/snippets/$1.snippets
+emulate -LR zsh
+
+if (( $# > 0 )); then
+	vim ~/.vim/snippets/$1.snippets
+else
+	vim ~/.vim/snippets/_.snippets
+fi

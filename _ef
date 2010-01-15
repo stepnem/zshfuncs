@@ -1,2 +1,6 @@
 #compdef ef
-_files -W ~/.zsh/functions
+local -a fns
+fns=(~/.zsh/functions/**(.:t))
+_describe -t functions 'Zsh functions' fns
+zstyle ':completion::complete:ef:*' ignore-line 1
+# TODO how to make it not ignore the command itself -- `ef'?

@@ -1,4 +1,7 @@
 #autoload
 gupall
 hgup
+darcsup
+bzrup
 svnup
+cvsup

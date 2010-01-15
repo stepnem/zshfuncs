@@ -1,10 +1,11 @@
 #autoload
-emulate -L zsh
-setopt noautonamedirs
-((${+_SNSvnUpdateDirs})) || _SNSvnUpdateDirs=($(<~/Hacking/svnupdatedirs))
-for d in $_SNSvnUpdateDirs; do
+emulate -LR zsh
+#setopt noautonamedirs
+while IFS= read -r d; do
 	pushd "${(e)d}" && echo `pwd`: || { print -l '!@#$%'; return 1 }
-	[[ `svn st -u` = *\** ]] && svn up && svn log -v | less && svn diff -r "{`date -r $HOME/tmp/_SNsvnupdatestamp '+%F %T'`}:HEAD" | less
+  cwd=${"$(pwd)":t}
+  stampfile="$HOME/tmp/${cwd}svnstamp"
+	[[ `svn st -u` = *\** ]] && svn up && svn log -v | less && svn diff -r "{`date -r $stampfile '+%F %T'`}:HEAD" | less
+  touch $stampfile
 	popd
-done
-touch $HOME/tmp/_SNsvnupdatestamp
+done < ~/Hacking/svnupdatedirs

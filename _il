@@ -3,8 +3,9 @@ if (( CURRENT > 2 )); then
 	local user=${words[2]}
 	_files -W ~/.znc/users/$user/moddata/log
 else
-	#local expl
-	#_description znc_users expl 'ZNC user names'
-	#compadd "$expl[@]" 
-	_files -W ~/.znc/users -/
+  local -a userdirs
+  userdirs=(~/.znc/users/*(/:t))
+	local expl
+	_description znc_users expl 'ZNC user names'
+	compadd "$expl[@]" - "$userdirs[@]"
 fi

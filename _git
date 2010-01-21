@@ -6,10 +6,12 @@
 # be able to complete whatever may come before -option.
 
 # TODO: suggested zstyles:
-#
 # zstyle ':completion::*:git-{name-rev,add,rm}:*' ignore-line true
-# TODO: search for 'undocumented'
-# TODO: WTF is __git_tree_files supposed to do?
+
+# TODO:
+# - search for 'undocumented'
+# - WTF is __git_tree_files supposed to do?
+# - git-difftool
 
 _git() {
 local nul_arg abbrev_arg find_copies_harder_arg diff_l_arg pretty_arg exec_arg
@@ -1779,6 +1781,7 @@ _git-grep () {
 
   _arguments -A '--*' \
     '--cached[grep blobs registered in index file instead of working tree]' \
+    '--no-index[search contents not managed by Git]' \
     '(-a --text)'{-a,--text}'[process binary files as if they were text]' \
     '(-i --ignore-case)'{-i,--ignore-case}'[ignore case when matching]' \
     '(-w --word-regexp)'{-w,--word-regexp}'[match only whole words]' \
@@ -1918,6 +1921,7 @@ _git-push () {
     '--repo=-[default repository to use]:repository:__git_any_repositories' \
     '(       --no-thin)--thin[try to minimize number of objects to be sent]' \
     '(--thin          )--no-thin[do not try to minimize number of objects to be sent]' \
+    '(-u --set-upstream)'{-u,--set-upstream}'[add upstream tracking reference for pushed branches]' \
     $verbose_arg \
     '::repository:__git_any_repositories' \
     '*::refspec:__git_ref_specs' && ret=0

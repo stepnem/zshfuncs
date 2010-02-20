@@ -3,24 +3,25 @@ emulate -LR zsh
 local -a files
 files=(`eval $history[$#history]`)
 if (( $# == 0 )); then
-	less $files
+  less $files
 elif (( $# == 1 )); then
-	case $1 in
-		<->)
-			less $files[$1]
-		;;
-		<->-<->)
-			s=${1%-*}
-			e=${1#*-}
-			less $files[$s,$e]
-		;;
-		*)
-			echo Oh well...
-		;;
-	esac
+  case $1 in
+    <->)
+      less $files[$1]
+    ;;
+    <->-<->)
+      s=${1%-*}
+      e=${1#*-}
+      less $files[$s,$e]
+    ;;
+    *)
+      echo Oh well...
+    ;;
+  esac
 else
-	for fnum; do
-		wanted+=($files[$fnum])
-	done
-	less $wanted
+  local fnum
+  for fnum; do
+    wanted+=($files[$fnum])
+  done
+  less $wanted
 fi

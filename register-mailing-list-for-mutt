@@ -1,0 +1,36 @@
+#autoload
+emulate -LR zsh
+
+local user="Štěpán Němec <stepnem@gmail.com>"
+local mailbox
+local address
+
+local ffn="$HOME/.mutt/init/folderhooks"
+local lfn="$HOME/.mutt/init/lists"
+local mfn="$HOME/.mutt/init/mailboxes"
+
+if (( $# )) && (( $# <= 2 )); then
+  if (( $# == 1 )); then
+    mailbox="+stepnem/${1%%@*}"
+    address="${1//./\\\\\\\\.}"
+  else
+    mailbox="+stepnem/$1"
+    address="${2//./\\\\\\\\.}"
+  fi
+
+  echo subscribe "$address" >> "$lfn" && sort "$lfn" -o "$lfn" &&
+  echo mailboxes \""$mailbox"\" >> "$mfn" && sort "$mfn" -o "$mfn" &&
+  echo folder-hook "$mailbox" \'set folder = \$folder/stepnem\' >> "$ffn" &&
+  echo folder-hook "$mailbox" \'set from = \""$user"\"\' >> "$ffn" && sort "$ffn" -o "$ffn" &&
+  echo OK || echo "Bad bad."
+else
+  echo
+  echo "Add configuration snippets for a specified mailing list to Mutt's init files."
+  echo
+  echo "Accepts 1 or 2 arguments:"
+  echo "the name of the mail box (optional) and the address of the list."
+  echo
+  echo "Examples:"
+  echo "$0 cool-list the-cool-list@meh.org"
+  echo "$0 cooler-list@bah.net"
+fi

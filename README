@@ -1,0 +1,9 @@
+This is my collection of functions for Zsh <http://zsh.sf.net>.
+
+Some of them might be of general interest:
+
+_clbuild: Completion for clbuild <http://common-lisp.net/project/clbuild/>.
+_git: Upstream Git completion with some updates/additions and corrections.
+_hg: Same as Git, but for Mercurial.
+
+Comments or improvements welcome.

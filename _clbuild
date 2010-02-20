@@ -1,0 +1,150 @@
+#compdef clbuild
+
+# clbuild <http://common-lisp.net/project/clbuild/> completion for Zsh <http://zsh.sf.net>
+# Last Modified: 2010-02-20 10:28 Štěpán Němec <stepnem@gmail.com>
+# All Rites Reversed.
+#
+# Configuration:
+# - set your clbuild directory:
+# zstyle ':completion:*:*:clbuild:*' clbuild-dir "$HOME/Hacking/clbuild"
+
+local -a project_files
+project_files=(projects wnpp-projects my-projects implementations)
+
+local -a project_groups
+project_groups=(--all-projects --main-projects --wnpp-projects --installed)
+
+local -a applications
+applications=(clim-launcher listener gsharp climacs closure beirc climplayer
+demodemo clim-alerts eclipse hunchentoot webdav parse-xml validate-xml
+valideate-relax-ng html-to-xhtml xhtml-to-html xuriella vecto-demo
+adw-charting-demo ltk-demo clpython)
+
+local -a clbuild_commands
+clbuild_commands=(
+  'check:check availability of all necessary helper applications'
+  'check-urls:compare installed repository urls against current locations'
+  'clean:delete all compiled object files [in source/PROJECT]'
+  'clean-links:remove broken symlinks in systems/'
+  'compile-implementation:compile a Lisp implementation'
+  'diff:show local changes (for all version-controlled projects)'
+  'dumpcore:recompile and dump a core file for faster startup'
+  'help:show usage information'
+  'install:install projects'
+  'lisp:run Lisp in the terminal (using sbcl.core)'
+  'list:list all projects, or projects matching PATTERN'
+  'make-project:set up a new, empty project'
+  'mrproper:trash all projects'
+  'preloaded:run Lisp in the terminal (using monster.core)'
+  'rebuild-links:remove and add .asd file symlinks for all projects'
+  'recompile:compile fasls'
+  'record-dependencies:rebuild dependency information file'
+  'register-asd:add .asd file symlinks for PROJECT'
+  'run:start an application'
+  'show:display information about a project'
+  'skip:mark this project as done for the purposes of update --resume'
+  'slime:run the Superior Lisp Interaction Mode in a fresh Emacs'
+  'slime-configuration:print .emacs snippet for Slime'
+  'trash:move source/PROJECT to trash/'
+  'uninstall:uninstall projects'
+  'update:download/update projects'
+  'update-missing:download only projects not present yet'
+  )
+
+_application () {
+  _describe -t application "clbuild application" applications
+}
+
+_installed_project () {
+  local clbdir
+  zstyle -s ":completion:*:*:clbuild:*" clbuild-dir clbdir
+  _files -/ -W "$clbdir/source" -X '%Bproject directories'
+}
+
+_lisp_implementation () {
+  local clbdir
+  zstyle -s ":completion:*:*:clbuild:*" clbuild-dir clbdir
+  local -a impls
+  while read line; do
+    [[ $line != \#* ]] && impls+=(${${=line}[1]})
+  done < "$clbdir/implementations"
+  _describe -t implementations 'Lisp implementations' impls
+}
+
+_project_spec () {
+  local clbdir
+  zstyle -s ":completion:*:*:clbuild:*" clbuild-dir clbdir
+  local -a projects
+  for f in $clbdir/$^project_files(N); do
+    while read line; do
+      [[ $line != \#* ]] && projects+=(${${=line}[1]})
+    done < "$f"
+  done
+  _describe -t project-spec 'project spec' projects
+}
+
+_project_spec2 () {
+  local clbdir
+  zstyle -s ":completion:*:*:clbuild:*" clbuild-dir clbdir
+  local -a projects
+  for f in $clbdir/$^project_files(N); do
+    while read line; do
+      [[ $line != \#* ]] && projects+=(${${=line}[1]})
+    done < "$f"
+  done
+  projects+=($project_groups)
+  _describe -t project-spec 'project spec' projects
+}
+
+local curcontext="$curcontext"
+local mode state ret
+
+local -a optargs
+optargs=(
+  '(- :)--help[display short usage info]'
+  '(-)--implementation[specify Lisp implementation to use]:Lisp implementation:_lisp_implementation'
+  '(- :)--long-help[display detailed usage info]'
+  '*:: :->subcmd'
+  )
+
+_arguments -C $optargs && return
+
+if [[ $state == "subcmd" ]]; then
+  if (( CURRENT == 1 )); then
+    _describe -t subcommands 'clbuild command' clbuild_commands
+  else
+    case "$words[1]" in
+      list)
+        _message pattern
+        ;;
+      update)
+        _arguments \
+          '(--dependencies --no-dependencies)'{--dependencies,--no-dependencies} \
+          '(:)--resume[consider only projects that a previous update run failed to fetch]' \
+          '*:project spec:_project_spec2' \
+          && return
+        ;;
+      show|skip)
+        _arguments \
+          '*:project name:_project_spec' \
+          && return
+        ;;
+      dumpcore|recompile)
+        _arguments \
+          '*:project spec:_project_spec2' \
+          && return
+        ;;
+      clean|register-asd|trash)
+        _arguments \
+          '*:installed project:_installed_project' \
+          && return
+        ;;
+      run)
+        _arguments \
+          '--help[show help for applications]' \
+          ':application:_application' \
+          && return
+        ;;
+    esac
+  fi
+fi

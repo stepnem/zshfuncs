@@ -1,2 +1,2 @@
 #autoload
-history 0 | grep "$@"
+history -i 0 | grep "$@"

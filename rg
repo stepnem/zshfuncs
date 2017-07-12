@@ -1,5 +1,6 @@
 #autoload
 #based on <http://peadrop.com/blog/category/computers/linux/>
+local opts filepat pat
 if [[ "$1" == -* ]]; then
   opts="$1"
   filepat="$2"

@@ -1,0 +1,3 @@
+#compdef fundef
+
+_describe -t functions 'Zsh functions' ${(ok)functions}

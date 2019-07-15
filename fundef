@@ -1,0 +1,6 @@
+#autoload
+emulate -LR zsh
+
+# Display Zsh function definition
+autoload +X $1
+whence -f $1

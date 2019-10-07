@@ -1,0 +1,8 @@
+# https://stackoverflow.com/questions/1115904/shortest-way-to-swap-two-files-in-bash
+if [ ! -z "$2" ] && [ -e "$1" ] && [ -e "$2" ] && ! [ "$1" -ef "$2" ] && (([ -f "$1" ] && [ -f "$2" ]) || ([ -d "$1" ] && [ -d "$2" ])) ; then
+  tmp=$(mktemp -d $(dirname "$1")/XXXXXX)
+  mv "$1" "$tmp" && mv "$2" "$1" &&  mv "$tmp"/"$1" "$2"
+  rmdir "$tmp"
+else
+  echo "Usage: swap file1 file2 or swap dir1 dir2"
+fi
